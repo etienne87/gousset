@@ -9,7 +9,7 @@ import sys
 import os
 
 # Add the tests directory to the path so we can import test modules
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'tests'))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "tests"))
 
 import module_a
 import module_b
@@ -56,7 +56,7 @@ def main():
 
     print("\n✅ Done! Check the timing statistics below:")
     print("   (Statistics automatically print when the program exits)")
-    print("\n" + "="*50)
+    print("\n" + "=" * 50)
 
 
 if __name__ == "__main__":

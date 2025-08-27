@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [3.8, 3.9, "3.10", "3.11", "3.12"]
+        python-version: ["3.11", "3.12"]
 
     steps:
     - uses: actions/checkout@v4
@@ -28,12 +28,12 @@ jobs:
 
     - name: Lint with flake8
       run: |
-        flake8 gousset tests --count --select=E9,F63,F7,F82 --show-source --statistics
-        flake8 gousset tests --count --exit-zero --max-complexity=10 --max-line-length=88 --statistics
+        flake8 gousset/ tests/ --count --select=E9,F63,F7,F82 --show-source --statistics
+        flake8 gousset/ tests/ --count --exit-zero --max-complexity=10 --max-line-length=88 --statistics
 
     - name: Format check with black
       run: |
-        black --check gousset tests
+        black --check --diff gousset/ tests/ examples/
 
     - name: Type check with mypy
       run: |

@@ -35,12 +35,10 @@ class TestGousset(unittest.TestCase):
         # Should have 5 slow_function calls
         # and 8 fast_function calls (5 nested + 3 direct)
         self.assertEqual(
-            len(gousset.core._timings["tests.module_a"]["slow_function"]),
-            5
+            len(gousset.core._timings["tests.module_a"]["slow_function"]), 5
         )
         self.assertEqual(
-            len(gousset.core._timings["tests.module_a"]["fast_function"]),
-            8
+            len(gousset.core._timings["tests.module_a"]["fast_function"]), 8
         )
 
     def test_instrument_module_b(self):
