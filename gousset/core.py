@@ -9,6 +9,7 @@ from functools import wraps
 from collections import defaultdict
 from typing import Any, Callable, Dict, List
 import types
+import inspect
 
 # Module-level variables
 _timings: Dict[str, Dict[str, List[float]]] = defaultdict(lambda: defaultdict(list))
@@ -104,7 +105,13 @@ def instrument(module: Any) -> None:
     # Get all functions in the module and instrument them
     for name in dir(module):
         obj = getattr(module, name)
-        if isinstance(obj, types.FunctionType) and not name.startswith("_"):
+        # Check for any callable that's not a class and not private
+        if (
+            callable(obj)
+            and not name.startswith("_")
+            and not inspect.isclass(obj)
+            and not inspect.ismodule(obj)
+        ):
             # Store original for potential restoration
             _original_functions[f"{module_name}.{name}"] = obj
 
