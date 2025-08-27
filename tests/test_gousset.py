@@ -4,7 +4,6 @@ Test suite for gousset timing profiler.
 
 import unittest
 import io
-import sys
 from contextlib import redirect_stdout
 
 import gousset
@@ -33,9 +32,16 @@ class TestGousset(unittest.TestCase):
         self.assertIn("slow_function", gousset.core._timings["tests.module_a"])
         self.assertIn("fast_function", gousset.core._timings["tests.module_a"])
 
-        # Should have 5 slow_function calls and 8 fast_function calls (5 nested + 3 direct)
-        self.assertEqual(len(gousset.core._timings["tests.module_a"]["slow_function"]), 5)
-        self.assertEqual(len(gousset.core._timings["tests.module_a"]["fast_function"]), 8)
+        # Should have 5 slow_function calls
+        # and 8 fast_function calls (5 nested + 3 direct)
+        self.assertEqual(
+            len(gousset.core._timings["tests.module_a"]["slow_function"]),
+            5
+        )
+        self.assertEqual(
+            len(gousset.core._timings["tests.module_a"]["fast_function"]),
+            8
+        )
 
     def test_instrument_module_b(self):
         """Test instrumenting module B with recursive functions"""
@@ -85,10 +91,10 @@ def main():
     gousset.instrument(module_a)
 
     for i in range(10):
-        result = module_a.slow_function()  # Calls fast_function internally
+        _ = module_a.slow_function()  # Calls fast_function internally
 
     for i in range(5):
-        result = module_a.medium_function()
+        _ = module_a.medium_function()
 
     # Test Module B
     print("\n2. Testing Module B (recursive functions)")
@@ -96,13 +102,13 @@ def main():
 
     x = list(range(1, 1000))
     for i in range(5):
-        result = module_b.fibo(x)
+        _ = module_b.fibo(x)
 
     for i in range(3):
-        result = module_b.factorial(100)  # Shows many calls due to recursion
+        _ = module_b.factorial(100)  # Shows many calls due to recursion
 
     for i in range(7):
-        result = module_b.sum_squares(1000)
+        _ = module_b.sum_squares(1000)
 
     print("\nDone - statistics will be printed at exit")
     print("Notice how:")

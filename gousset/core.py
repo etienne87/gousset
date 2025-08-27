@@ -58,8 +58,11 @@ def _print_all_statistics() -> None:
             print()
 
 
-def _create_timed_function(original_func: Callable, func_name: str, module_name: str) -> Callable:
+def _create_timed_function(
+    original_func: Callable, func_name: str, module_name: str
+) -> Callable:
     """Create a timed version of a function"""
+
     @wraps(original_func)
     def timed_wrapper(*args: Any, **kwargs: Any) -> Any:
         ts = time.time()
@@ -91,7 +94,7 @@ def instrument(module: Any) -> None:
     """
     _register_exit_handler()
 
-    module_name = getattr(module, '__name__', 'unknown_module')
+    module_name = getattr(module, "__name__", "unknown_module")
 
     if module_name in _instrumented_modules:
         return  # Already instrumented
@@ -101,7 +104,7 @@ def instrument(module: Any) -> None:
     # Get all functions in the module and instrument them
     for name in dir(module):
         obj = getattr(module, name)
-        if isinstance(obj, types.FunctionType) and not name.startswith('_'):
+        if isinstance(obj, types.FunctionType) and not name.startswith("_"):
             # Store original for potential restoration
             _original_functions[f"{module_name}.{name}"] = obj
 
