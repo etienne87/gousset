@@ -3,6 +3,7 @@
 > *Your pocket profiler* - Elegant, friendly timing for Python functions
 
 
+[![CI](https://github.com/etienne87/gousset/workflows/CI/badge.svg)](https://github.com/etienne87/gousset/actions)
 
 **Gousset** (pronounced "goo-SAY") is a simple, unobtrusive timing profiler for Python. Like a elegant pocket watch, it sits quietly and tells you exactly what you need to know about your function performance.
 
