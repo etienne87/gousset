@@ -66,6 +66,35 @@ class TestGousset(unittest.TestCase):
         # So 2 calls to factorial(5) = 10 total calls
         self.assertEqual(len(gousset.core._timings["tests.module_b"]["factorial"]), 10)
 
+    def test_instrument_module_b_only_factorial(self):
+        """Test instrumenting module B with recursive functions"""
+        # Instrument module B
+        gousset.core.restore_all()
+        gousset.instrument(module_b, only="factorial")
+
+        # Test fibonacci
+        x = list(range(1, 100))
+        for _ in range(3):
+            result = module_b.fibo(x)
+            self.assertEqual(len(result), 99)
+
+        # Test factorial (recursive - will create multiple calls)
+        for _ in range(2):
+            result = module_b.factorial(5)
+            self.assertEqual(result, 120)
+
+        # Verify timing data
+        self.assertIn("tests.module_b", gousset.core._timings)
+
+        print("Instrumented functions: ", gousset.core._timings["tests.module_b"].keys())
+
+        self.assertNotIn("fibo", gousset.core._timings["tests.module_b"])
+        self.assertIn("factorial", gousset.core._timings["tests.module_b"])
+
+        # factorial(5) should create 5 calls each time (5, 4, 3, 2, 1)
+        # So 2 calls to factorial(5) = 10 total calls
+        self.assertEqual(len(gousset.core._timings["tests.module_b"]["factorial"]), 10)
+
     def test_statistics_output(self):
         """Test that statistics are properly formatted"""
         # Capture output from statistics printing
