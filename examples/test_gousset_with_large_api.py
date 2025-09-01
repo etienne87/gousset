@@ -15,6 +15,4 @@ z = x * 3
 
 y = cv.binary_dilation(x)  # this gets time
 
-m = cv.binary_erosion(x) # this does not
-
-
+m = cv.binary_erosion(x)  # this does not

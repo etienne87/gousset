@@ -8,7 +8,6 @@ import statistics
 from functools import wraps
 from collections import defaultdict
 from typing import Any, Callable, Dict, List
-import types
 import inspect
 
 # Module-level variables
@@ -59,8 +58,11 @@ def _print_all_statistics() -> None:
             print()
 
 
-def _create_timed_function(original_func: Callable, func_name: str, module_name: str) -> Callable:
+def _create_timed_function(
+    original_func: Callable, func_name: str, module_name: str
+) -> Callable:
     """Create a timed version of a function"""
+
     @wraps(original_func)
     def timed_wrapper(*args: Any, **kwargs: Any) -> Any:
         ts = time.time()
@@ -82,7 +84,7 @@ def instrument(module, only=None, exclude=None, **kwargs):
     Args:
         module: The Python module to instrument
         only: Optional string or list of function names to instrument exclusively
-        exclude: Optional string or list of function names to exclude from instrumentation
+        exclude: Optional string or list of function names to exclude
         **kwargs: Additional arguments (e.g., custom measure_func)
 
     Examples:
@@ -101,7 +103,9 @@ def instrument(module, only=None, exclude=None, **kwargs):
     _register_exit_handler()
 
     if not inspect.ismodule(module):
-        raise ValueError(f"First argument must be a module, got {type(module).__name__}")
+        raise ValueError(
+            f"First argument must be a module, got {type(module).__name__}"
+        )
 
     # Normalize only/exclude to sets
     if only is not None:
@@ -124,8 +128,8 @@ def _instrument_single_function(func, **kwargs):
     Instrument a single function
     Returns the timed wrapper function that should replace the original
     """
-    func_name = getattr(func, '__name__', 'unknown_function')
-    module_name = getattr(func, '__module__', 'unknown_module')
+    func_name = getattr(func, "__name__", "unknown_function")
+    module_name = getattr(func, "__module__", "unknown_module")
 
     key = f"{module_name}.{func_name}"
     if key in _original_functions:
@@ -141,6 +145,7 @@ def _instrument_single_function(func, **kwargs):
 
     # Try to replace in module automatically (best effort)
     import sys
+
     if module_name in sys.modules:
         module = sys.modules[module_name]
         if hasattr(module, func_name):
@@ -152,7 +157,7 @@ def _instrument_single_function(func, **kwargs):
 
 def _instrument_module(module, only=None, exclude=None, **kwargs):
     """Instrument functions in a module with optional filtering"""
-    module_name = getattr(module, '__name__', 'unknown_module')
+    module_name = getattr(module, "__name__", "unknown_module")
 
     if module_name in _instrumented_modules:
         return  # Already instrumented
@@ -162,7 +167,7 @@ def _instrument_module(module, only=None, exclude=None, **kwargs):
     # Get all functions in the module and instrument them
     for name in dir(module):
         # Skip private functions by default
-        if name.startswith('_'):
+        if name.startswith("_"):
             continue
 
         # Apply only filter
@@ -175,9 +180,7 @@ def _instrument_module(module, only=None, exclude=None, **kwargs):
 
         obj = getattr(module, name)
         # Check for any callable that's not a class and not private
-        if (callable(obj)
-            and not inspect.isclass(obj)
-            and not inspect.ismodule(obj)):
+        if callable(obj) and not inspect.isclass(obj) and not inspect.ismodule(obj):
 
             # Store original for potential restoration
             _original_functions[f"{module_name}.{name}"] = obj
@@ -199,10 +202,11 @@ def restore_all():
     # Restore all original functions
     for key, original_func in _original_functions.items():
         try:
-            module_name, func_name = key.rsplit('.', 1)
+            module_name, func_name = key.rsplit(".", 1)
             print(f"DEBUG: Restoring {module_name}.{func_name}")
 
             import sys
+
             if module_name in sys.modules:
                 module = sys.modules[module_name]
                 if hasattr(module, func_name):
@@ -216,8 +220,8 @@ def restore_all():
             print(f"DEBUG: Error restoring {key}: {e}")
 
     # Clear all state
-    _timings.clear()
-    _instrumented_modules.clear()
-    _original_functions.clear()
+    _timings = defaultdict(lambda: defaultdict(list))
+    _instrumented_modules = set()
+    _original_functions = {}
     _registered_exit = False
     print("DEBUG: All state cleared")

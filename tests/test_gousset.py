@@ -86,7 +86,9 @@ class TestGousset(unittest.TestCase):
         # Verify timing data
         self.assertIn("tests.module_b", gousset.core._timings)
 
-        print("Instrumented functions: ", gousset.core._timings["tests.module_b"].keys())
+        print(
+            "Instrumented functions: ", gousset.core._timings["tests.module_b"].keys()
+        )
 
         self.assertNotIn("fibo", gousset.core._timings["tests.module_b"])
         self.assertIn("factorial", gousset.core._timings["tests.module_b"])
